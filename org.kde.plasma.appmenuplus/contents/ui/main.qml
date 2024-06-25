@@ -18,6 +18,7 @@ import org.kde.plasma.plasma5support 2.0 as P5Support
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.private.appmenu 1.0 as AppMenuPrivate
 import org.kde.kirigami 2.5 as Kirigami
+import org.kde.taskmanager as TaskManager
 
 PlasmoidItem {
     id: root
@@ -25,35 +26,30 @@ PlasmoidItem {
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool view: Plasmoid.configuration.compactView
     
-    
-    readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
+    //readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
-    readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
+    //readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
-    readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove
-
-    readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
-    readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable
-    readonly property bool isLastActiveWindowMinimizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMinimizable
-    readonly property bool isLastActiveWindowVirtualDesktopsChangeable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isVirtualDesktopsChangeable
+    //readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove
+    //readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
+    //readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable
+    //readonly property bool isLastActiveWindowMinimizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMinimizable
+    //readonly property bool isLastActiveWindowVirtualDesktopsChangeable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isVirtualDesktopsChangeable
 
     readonly property Item lastActiveTaskItem: windowInfoLoader.item.lastActiveTaskItem
     
-    readonly property bool isMenuAccepted: appMenuModel.visible  && !appMenuModel.ignoreWindow
+    readonly property bool isMenuAccepted: appMenuModel.visible && appMenuModel.menuAvailable  && !appMenuModel.ignoreWindow
 
     Loader {
         id: windowInfoLoader
         sourceComponent: plasmaTasksModel
-
         Component{
             id: plasmaTasksModel
             PlasmaTasksModel{}
         }
     }
     
-    
-    
-    
+    Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
     
     onViewChanged: {
         Plasmoid.view = view;
@@ -90,7 +86,7 @@ PlasmoidItem {
             if (appMenuModel.menuAvailable && Plasmoid.currentIndex > -1 && buttonRepeater.count > 0) {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else {
-                return buttonRepeater.count > 0 || Plasmoid.configuration.compactView ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.HiddenStatus;
+                return buttonRepeater.count > 0 || Plasmoid.configuration.fillWidth || Plasmoid.configuration.compactView ? PlasmaCore.Types.ActiveStatus :  PlasmaCore.Types.HiddenStatus;
             }
         }
 
@@ -100,7 +96,7 @@ PlasmoidItem {
 
         flow: root.vertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rowSpacing: 0
-        columnSpacing: 0
+        columnSpacing: Plasmoid.configuration.spacing
 
         Binding {
             target: plasmoid
@@ -136,12 +132,39 @@ PlasmoidItem {
             connectedSources: ["Alt"]
         }
 
-        PlasmaComponents3.ToolButton {
+        PlasmaComponents3.Label {
             id: noMenuPlaceholder
             visible: buttonRepeater.count === 0
             text: Plasmoid.title
+            verticalAlignment: Text.AlignVCenter
             Layout.fillWidth: root.vertical
             Layout.fillHeight: !root.vertical
+
+            //This Loader is to support maximize/restore active window for plasma panels.
+            MouseArea {
+                anchors.fill: parent
+
+                onDoubleClicked: {
+                    if(Plasmoid.configuration.toggleMaximizedOnDoubleClick){
+                        plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)
+                    }         
+                }
+                onWheel: {
+                    if(Plasmoid.configuration.toggleMaximizedOnMouseWheel){
+                        var isMaximized = plasmoidTasksModel.data(plasmoidTasksModel.activeTask, TaskManager.AbstractTasksModel.IsMaximized)
+                        if (wheel.angleDelta.y > 0 && !isMaximized) {
+                            plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)           
+                        } else if(wheel.angleDelta.y < 0 && isMaximized){
+                            plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)
+                        }
+                    }       
+                }
+                
+            }
+            //---This Loader is to support maximize/restore active window for plasma panels.
+
+                
+ 
         }
 
         Repeater {
@@ -170,13 +193,36 @@ PlasmoidItem {
             Layout.preferredHeight: 0
             Layout.fillWidth: true
             Layout.fillHeight: true
+            //This Loader is to support maximize/restore active window for plasma panels.
+            MouseArea {
+                anchors.fill: parent
+                TaskManager.TasksModel {
+                        id: plasmoidTasksModel
+                }
+                onDoubleClicked: {
+                    if(Plasmoid.configuration.toggleMaximizedOnDoubleClick){
+                        plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)
+                    }         
+                }
+                onWheel: {
+                    if(Plasmoid.configuration.toggleMaximizedOnMouseWheel){
+                        var isMaximized = plasmoidTasksModel.data(plasmoidTasksModel.activeTask, TaskManager.AbstractTasksModel.IsMaximized)
+                        if (wheel.angleDelta.y > 0 && !isMaximized) {
+                            plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)           
+                        } else if(wheel.angleDelta.y < 0 && isMaximized){
+                            plasmoidTasksModel.requestToggleMaximized(plasmoidTasksModel.activeTask)
+                        }
+                    }       
+                }
+                
+            }
+            //---This Loader is to support maximize/restore active window for plasma panels.
         }
     }
 
     AppMenuPrivate.AppMenuModel {
         id: appMenuModel
-        
-        
+                
         containmentStatus: Plasmoid.containment.status
         screenGeometry: root.screenGeometry
         onRequestActivateIndex: Plasmoid.requestActivateIndex(index)
@@ -185,10 +231,10 @@ PlasmoidItem {
         }
         readonly property bool ignoreWindow: {
             var shownFilter = !existsWindowShown;
-            var activeFilter = Plasmoid.configuration.filterByActive ? !existsWindowActive : false;
+            //var activeFilter = Plasmoid.configuration.filterByActive ? !existsWindowActive : false;
             var maximizedFilter = Plasmoid.configuration.filterByMaximized ? !isLastActiveWindowMaximized : false;
-
-            return (shownFilter || activeFilter || maximizedFilter);
+            //return (shownFilter || activeFilter || maximizedFilter);
+            return (shownFilter || maximizedFilter);
         }
     }
 }

@@ -10,18 +10,41 @@
       <label>If true it only shows a button for the application menu.</label>
       <default>false</default>
     </entry>
+    <!--
     <entry name="filterByActive" type="Bool">
-      <label>If true it only shows the app menu only for the current active window.</label>
+      <label>If true it only shows the app menu if the current window that provides its menu is also active</label>
       <default>true</default>
     </entry>
     <entry name="filterChildrenWindows" type="Bool">
       <label>If true it only shows the app menu only for the current active window and not for its children</label>
-      <default>true</default>
+      <default>false</default>
     </entry>
+    -->
+    <entry name="spacing" type="Int">
+      <label>Spacing between menu items</label>
+      <default>6</default>
+    </entry>
+    
     <entry name="filterByMaximized" type="Bool">
       <label>If true it only shows the app menu if the current active window is maximized</label>
       <default>false</default>
     </entry>
+    
+    <entry name="fillWidth" type="Bool">
+      <label>If true it always fill the maximum available width, even when there are no menu items shown.</label>
+      <default>true</default>
+    </entry>
+    
+    <entry name="toggleMaximizedOnDoubleClick" type="Bool">
+      <default>true</default>
+      <label>If true, toggles active window maximized/restored on double click</label>
+    </entry>
+    
+    <entry name="toggleMaximizedOnMouseWheel" type="Bool">
+      <default>true</default>
+      <label>If true, toggles active window maximized/restored on mouse wheel up/down</label>
+    </entry>
+    
   </group>
   
 </kcfg>
