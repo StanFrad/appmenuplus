@@ -49,7 +49,7 @@ PlasmoidItem {
         }
     }
     
-    Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
+    //Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
     
     onViewChanged: {
         Plasmoid.view = view;
@@ -93,7 +93,7 @@ PlasmoidItem {
         LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
         Layout.minimumWidth: implicitWidth
         Layout.minimumHeight: implicitHeight
-
+        Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
         flow: root.vertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rowSpacing: 0
         columnSpacing: Plasmoid.configuration.spacing
