@@ -7,6 +7,8 @@ Allows:
 - - minimize/maximize window by doubleclick
 - - minimize/maximize scroll window
 - set the space between menu items
+- 
+For now, for it to work, you need to link(ubuntu/kubuntu/neon) /usr/lib/x86_64-linux-gnu/qt6/plugins/plasma/applets/org.kde.plasma.appmenu.so in org.kde.plasma.appmenuplus.so
 
 **Расширенные настройки для стандартного виджета "Меню приложений" в KDE6**
 Позволяет:
@@ -15,3 +17,5 @@ Allows:
 - - минимизировать/максимизировать окно по даблклику
 - - минимизировать/максимизировать окно по скролу
 - задавать промежуток между пунктами меню
+- 
+пока чтоб работало надо линкануть(ubuntu/kubuntu/neon) /usr/lib/x86_64-linux-gnu/qt6/plugins/plasma/applets/org.kde.plasma.appmenu.so в org.kde.plasma.appmenuplus.so
