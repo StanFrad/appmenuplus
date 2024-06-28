@@ -23,6 +23,7 @@ KCM.SimpleKCM {
     property alias cfg_toggleMaximizedOnMouseWheel: toggleMouseWheelMaximizedChk.checked
     
     property alias cfg_spacing: spacingSlider.value
+    property alias cfg_hideTitle: hideTitleChk.checked
     
     property var cfg_compactViewDefault
     property var cfg_filterByMaximizedDefault
@@ -31,7 +32,7 @@ KCM.SimpleKCM {
     property var cfg_toggleMaximizedOnMouseWheelDefault
     
     property var cfg_spacingDefault
-
+    property var cfg_hideTitleDefault
     
     
     Kirigami.FormLayout {
@@ -83,10 +84,13 @@ KCM.SimpleKCM {
             text: spacingSlider.value + " " + i18n("px.")
         }
 
-
+        CheckBox {
+            id: hideTitleChk
+            text: i18n("Hide title Plasmoid")
+        }
         
         Label{
-            text: i18n("Filters:")
+            text: i18n("Extra:")
         }
         
         //CheckBox {
