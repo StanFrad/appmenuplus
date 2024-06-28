@@ -48,9 +48,8 @@ PlasmoidItem {
             PlasmaTasksModel{}
         }
     }
-    
     //Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
-    
+
     onViewChanged: {
         Plasmoid.view = view;
     }
@@ -89,10 +88,11 @@ PlasmoidItem {
                 return buttonRepeater.count > 0 || Plasmoid.configuration.fillWidth || Plasmoid.configuration.compactView ? PlasmaCore.Types.ActiveStatus :  PlasmaCore.Types.HiddenStatus;
             }
         }
-
+        
         LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
         Layout.minimumWidth: implicitWidth
         Layout.minimumHeight: implicitHeight
+        
         Layout.fillWidth: !view && Plasmoid.configuration.fillWidth ? true : root.vertical
         flow: root.vertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
         rowSpacing: 0
@@ -135,7 +135,7 @@ PlasmoidItem {
         PlasmaComponents3.Label {
             id: noMenuPlaceholder
             visible: buttonRepeater.count === 0
-            text: Plasmoid.title
+            text: Plasmoid.configuration.hideTitle ? null : Plasmoid.title
             verticalAlignment: Text.AlignVCenter
             Layout.fillWidth: root.vertical
             Layout.fillHeight: !root.vertical
